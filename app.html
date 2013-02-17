@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+  <head>
+    <title>k-D tree in D3.js | BM.W</title>
+    <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+    <style>
+      body {font-family: 'Avenir', 'Helvetica Neue', sans-serif}
+      #wrapper {margin: 0 auto; width: 60rem}
+      
+      text {dominant-baseline: middle; text-anchor: middle}
+      circle {stroke: #666; fill: white}
+
+      .axes line {stroke: black; opacity: 0.7; stroke-width: 0.25em}
+      .axes circle {stroke: #bbb; stroke-width: 0.06125em}
+      g.point {cursor: pointer} 
+      g.point text {font-size: smaller}
+      .field:hover .point, .field.active .point {opacity: 0.25}
+      .active, .point:hover, .node:hover {opacity: 1 !important}
+      .active > circle {stroke: #800; fill: #f88;}
+
+      .partitions line {stroke: black}
+
+      .tree:hover .node, .tree.active .node {opacity: 0.25}
+      .node {cursor: pointer}
+       {opacity: 1 !important}
+      text.label {font-weight: bold; opacity: 0.7; baseline-shift: -0.06125em}
+      text.coords {opacity: 0; font-size: smaller; baseline-shift: -1.75em}
+      g.node:hover text.coords {opacity: 0.8}
+      .links line {stroke: #ddd; stroke-width: 8}
+    </style>
+  </head>
+  <body>
+    <div id="wrapper">
+      <svg>
+        <g class="field" transform="translate(288, 288)"></g>
+        <g class="tree" transform="translate(576, 144)"></g>
+      </svg>
+    </div>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="kdtree.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
