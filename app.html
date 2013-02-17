@@ -3,9 +3,11 @@
   <head>
     <title>k-D tree in D3.js | BM.W</title>
     <script>document.write('<script src="http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js?snipver=1"></' + 'script>')</script>
+    <link rel="stylesheet" href="http://meyerweb.com/eric/tools/css/reset/reset.css">
     <style>
       body {font-family: 'Avenir', 'Helvetica Neue', sans-serif}
-      #wrapper {margin: 0 auto; width: 60rem}
+      #wrapper {margin: 1rem auto; width: 60rem}
+      svg {width: 100%; height: 30rem}
       
       text {dominant-baseline: middle; text-anchor: middle}
       circle {stroke: #666; fill: white}
@@ -14,10 +16,11 @@
       .axes circle {stroke: #bbb; stroke-width: 0.06125em; fill: none}
       .point {cursor: pointer} 
       .point text {font-size: x-small}
+      .field {cursor: crosshair}
       .field rect {fill: white}
       .field:hover .point, .field.active .point {opacity: 0.25}
       .active, .point:hover, .node:hover {opacity: 1 !important}
-      .active > circle, .nearest > circle {stroke: #800; fill: #f88;}
+      .active > circle, .nearest > circle, .point:hover > circle, .node:hover > circle {stroke: #800; fill: #f88}
 
       .partitions line {stroke: black}
       .partitions line.active {stroke: #b44; stroke-width: 0.1875em}
@@ -29,13 +32,17 @@
       text.coords {opacity: 0; font-size: smaller; baseline-shift: -1.75em}
       g.node:hover text.coords {opacity: 0.8}
       .links line {stroke: #ddd; stroke-width: 8}
+      
+      line.to-nearest {stroke: #b44; stroke-width: 0.1875em; opacity: 0.0}
+      line.to-nearest.active {opacity: 0.25 !important}
     </style>
   </head>
   <body>
     <div id="wrapper">
       <svg>
         <g class="field" transform="translate(288, 288)">
-          <rect x="-240" y="-240" width="480" height="480">
+          <rect x="-240" y="-240" width="480" height="480"></rect>
+          <line class="to-nearest"></line>
         </g>
         <g class="tree" transform="translate(576, 144)"></g>
       </svg>

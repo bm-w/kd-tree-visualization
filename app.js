@@ -5,10 +5,7 @@ var __slice = [].slice;
   var k, kdTree, _dot;
   d3.json('data.json', function(data) {
     var activate, axes, dim, ex, ey, field, g, getX, getY, layout, links, mx, my, nodes, partitionEnd, partitionStart, partitions, r, rect, svg, tree, x, _ref, _ref1, _ref2;
-    if (!((data != null) && data.length)) {
-      return console.log("No data...", data);
-    } else {
-      console.log("Got data (N = " + data.length + ")!");
+    if ((data != null) && data.length) {
       tree = kdTree(data);
       layout = d3.layout.tree();
       dim = [288, 240];
@@ -79,6 +76,7 @@ var __slice = [].slice;
       ], getX = _ref[0], getY = _ref[1];
       _ref1 = [d3.mean(data, getX), d3.extent(data, getX)], mx = _ref1[0], ex = _ref1[1];
       _ref2 = [d3.mean(data, getY), d3.extent(data, getY)], my = _ref2[0], ey = _ref2[1];
+      ((((svg.select('.field > rect')).attr('x', x(ex[0]))).attr('y', x(ey[0]))).attr('width', x(ex[1] - ex[0]))).attr('height', x(ey[1] - ey[0]));
       r = 8;
       axes = (field.append('svg:g')).classed("axes", true);
       (axes.append('svg:circle')).attr('r', x(1));
@@ -134,10 +132,10 @@ var __slice = [].slice;
       g.on('mouseover', activate('.node', '.tree', true));
       g.on('mouseout', activate('.node', '.tree', false));
       return rect = ((d3.select('.field')).on('mouseout', function() {
-        var sel;
-        return sel = (d3.selectAll('.nearest')).classed('nearest', false);
+        (d3.selectAll('.nearest')).classed('nearest', false);
+        return (d3.select('line.to-nearest')).classed('active', false);
       })).on('mousemove', function() {
-        var nearest, v;
+        var nearest, nx, v;
         (d3.selectAll('.nearest')).classed('nearest', false);
         mx = (function() {
           var _i, _len, _ref3, _results;
@@ -150,7 +148,9 @@ var __slice = [].slice;
           return _results;
         }).call(this);
         if ((nearest = kdTree.nearest(mx, tree)) != null) {
-          return (d3.select("g.point[data-id=\"" + nearest.value.id + "\"]")).classed('nearest', true);
+          (d3.select("g.point[data-id=\"" + nearest.value.id + "\"]")).classed('nearest', true);
+          nx = nearest.value.x;
+          return (((((d3.select('line.to-nearest')).classed('active', true)).attr('x1', x(mx[0]))).attr('y1', x(mx[1]))).attr('x2', x(nx[0]))).attr('y2', x(nx[1]));
         }
       });
     }

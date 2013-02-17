@@ -1,10 +1,6 @@
 (->
   d3.json 'data.json', (data) ->
-    if not (data? and data.length)
-      console.log "No data...", data
-    else
-      console.log "Got data (N = #{data.length})!"
-
+    if (data? and data.length)
       tree = kdTree data
       layout = (do d3.layout.tree)                                                                                                                      
 
@@ -61,6 +57,12 @@
       [getX, getY] = [((d) -> d.x[0]), ((d) -> d.x[1])]
       [mx, ex] = [(d3.mean data, getX), (d3.extent data, getX)]
       [my, ey] = [(d3.mean data, getY), (d3.extent data, getY)]
+
+      ((((svg.select '.field > rect')
+        .attr 'x', x ex[0])
+        .attr 'y', x ey[0])
+        .attr 'width', x ex[1] - ex[0])
+        .attr 'height', x ey[1] - ey[0]
 
       r = 8
       axes = (field.append 'svg:g')
@@ -120,8 +122,10 @@
 
       rect = ((d3.select '.field')
         .on 'mouseout', ->
-          sel = (d3.selectAll '.nearest')
-            .classed 'nearest', off)
+          (d3.selectAll '.nearest')
+            .classed 'nearest', off
+          (d3.select 'line.to-nearest')
+            .classed 'active', off)
         .on 'mousemove', ->
           (d3.selectAll '.nearest')
             .classed 'nearest', off
@@ -129,6 +133,13 @@
           if (nearest = kdTree.nearest mx, tree)?
             (d3.select "g.point[data-id=\"#{nearest.value.id}\"]")
               .classed 'nearest', on
+            nx = nearest.value.x
+            (((((d3.select 'line.to-nearest')
+              .classed 'active', on)
+              .attr 'x1', x mx[0])
+              .attr 'y1', x mx[1])
+              .attr 'x2', x nx[0])
+              .attr 'y2', x nx[1]
           
 
   k = 2
