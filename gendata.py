@@ -12,4 +12,4 @@ def resample(x_dist, n=10):
     with open('data.json', 'w') as f:
         f.write(json.dumps(data))
 
-resample([(0, 1)] * 2, 31)
+resample([(0, 1)] * 2, 127)

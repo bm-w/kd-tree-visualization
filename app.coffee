@@ -10,10 +10,12 @@
 
       dim = [288, 240]
 
-      activate = (selector, container, b) ->
+      activate = (selectors..., container, b) ->
         (d) ->
           id = d.value?.id or d.id
-          (d3.selectAll "#{selector}[data-id=\"#{id}\"], #{container}")
+          queries = for selector in selectors
+            "#{selector}[data-id=\"#{id}\"]"
+          sel = (d3.selectAll "#{queries.join(', ')}, #{container}")
             .classed 'active', b
 
       nodes = layout tree
@@ -48,8 +50,8 @@
           v = for i of (x = d.value.x)
             x[i].toFixed 2
           "(#{v.join ','})"
-      g.on 'mouseover', activate '.point', '.field', on
-      g.on 'mouseout', activate '.point', '.field', off
+      g.on 'mouseover', activate '.point', '.partitions line', '.field', on
+      g.on 'mouseout', activate '.point', '.partitions line', '.field', off
 
       field = d3.select 'g.field'
 
@@ -72,24 +74,21 @@
         .attr 'y1', -2 - r + x ey[0])
         .attr 'y2', 2 + r + x ey[1]
 
-      invert = (k, b) -> if k == 0 then b else not b
-      partitionStart = (k, ek) ->
-        (d) ->
-          if invert k, d.depth % 2 == 0
-            0.5 + x d.value.x[k]
-          else
-            x d.parent?.value.x[k] or ek[0]
-      partitionEnd = (k, ek) ->
-        (d) ->
-          if invert k, d.depth % 2 == 0
-            0.5 + x d.value.x[k]
-          else
-            [vd, vp] = [d.value.x[k], (p = d.parent)?.value.x[k] or -Infinity]
-            [gp, e] = [p, [ek[0], ek[1]]]
-            while (gp = gp?.parent?.parent)?
-              vgp = gp.value.x[k]
-              if vd > vgp then (e[0] = Math.max vgp, e[0]) else (e[1] = Math.min vgp, e[1])
-            x e[if vd < vp then 0 else 1]
+      partitionStart = (k, ek) -> (d) ->
+        if d.depth % 2 == k
+          0.5 + x d.value.x[k]
+        else
+          x d.parent?.value.x[k] or ek[0]
+      partitionEnd = (k, ek) -> (d) ->
+        if d.depth % 2 == k
+          0.5 + x d.value.x[k]
+        else
+          [vd, vp] = [d.value.x[k], (p = d.parent)?.value.x[k] or -Infinity]
+          [gp, e] = [p, [ek[0], ek[1]]]
+          while (gp = gp?.parent?.parent)?
+            vgp = gp.value.x[k]
+            if vd > vgp then (e[0] = Math.max vgp, e[0]) else (e[1] = Math.min vgp, e[1])
+          x e[if vd < vp then 0 else 1]
 
       partitions = (do ((((field
         .append 'svg:g')
@@ -119,6 +118,19 @@
       g.on 'mouseover', activate '.node', '.tree', on
       g.on 'mouseout', activate '.node', '.tree', off
 
+      rect = ((d3.select '.field')
+        .on 'mouseout', ->
+          sel = (d3.selectAll '.nearest')
+            .classed 'nearest', off)
+        .on 'mousemove', ->
+          (d3.selectAll '.nearest')
+            .classed 'nearest', off
+          mx = ((x.invert v) for v in d3.mouse this)
+          if (nearest = kdTree.nearest mx, tree)?
+            (d3.select "g.point[data-id=\"#{nearest.value.id}\"]")
+              .classed 'nearest', on
+          
+
   k = 2
   kdTree = (data, depth=0) ->
     if not data.length
@@ -130,9 +142,28 @@
 
     children = [
       kdTree sortedData[...medianIndex], depth
-      kdTree sortedData[(medianIndex + 1)..], depth
+      kdTree sortedData[medianIndex + 1..], depth
     ].filter (e) -> e
     node =
       value: sortedData[medianIndex]
       children: if children.length then children else null
+  _dot = (v0, v1) ->
+    v1 = if v1? then v1 else v0
+    v0[0] * v1[0] + v0[1] * v1[1]
+  kdTree.nearest = (x, tree, depth=0, ddBest=Infinity) ->
+    depth = if tree.depth? then tree.depth else depth
+
+    path = [node = tree].concat (while (c = node.children)?
+      node = c[if b = (x[k = depth++ % 2] < node.value.x[k]) then 0 else 1])
+
+    for node in (do path.reverse)
+      dd = _dot [(xn = node.value.x)[0] - x[0],  xn[1] - x[1]]
+      if dd < ddBest
+        [best, xb, ddBest] = [node, xn, dd]
+      if node.children?
+        if ddBest > (v = xn[k = --depth % 2] - x[k]) * v
+          root = node.children[if v < 0 then 0 else 1]
+          [node, dd] = kdTree.nearest x, root, null, ddBest
+          if node? then [best, xb, ddBest] = [node, node.value.x, dd]
+    if depth == 0 then best else [best, ddBest]
 ).call this

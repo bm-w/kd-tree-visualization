@@ -11,14 +11,16 @@
       circle {stroke: #666; fill: white}
 
       .axes line {stroke: black; opacity: 0.7; stroke-width: 0.25em}
-      .axes circle {stroke: #bbb; stroke-width: 0.06125em}
-      g.point {cursor: pointer} 
-      g.point text {font-size: smaller}
+      .axes circle {stroke: #bbb; stroke-width: 0.06125em; fill: none}
+      .point {cursor: pointer} 
+      .point text {font-size: x-small}
+      .field rect {fill: white}
       .field:hover .point, .field.active .point {opacity: 0.25}
       .active, .point:hover, .node:hover {opacity: 1 !important}
-      .active > circle {stroke: #800; fill: #f88;}
+      .active > circle, .nearest > circle {stroke: #800; fill: #f88;}
 
       .partitions line {stroke: black}
+      .partitions line.active {stroke: #b44; stroke-width: 0.1875em}
 
       .tree:hover .node, .tree.active .node {opacity: 0.25}
       .node {cursor: pointer}
@@ -32,7 +34,9 @@
   <body>
     <div id="wrapper">
       <svg>
-        <g class="field" transform="translate(288, 288)"></g>
+        <g class="field" transform="translate(288, 288)">
+          <rect x="-240" y="-240" width="480" height="480">
+        </g>
         <g class="tree" transform="translate(576, 144)"></g>
       </svg>
     </div>
