@@ -1,0 +1,19 @@
+{
+	"name": "kd-tree-visualization",
+	"author": "Bastiaan Marinus van de Weerd <bastiaan@bm-w.eu>",
+	"version": "0.1.0",
+	"description": "a (two-dimensional) visualization of a k-D tree",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/bm-w/kd-tree-visualization"
+	},
+	"scripts": {
+		"install": "make npm-install",
+		"test": "echo \"No actual tests; run using \\`make run\\` (or \\`npm start\\`).\"",
+		"start": "make run"
+	},
+	"devDependencies": {
+		"coffee-script": ">= 1.6.3",
+		"jade": ">= 0.35.0"
+	}
+}
