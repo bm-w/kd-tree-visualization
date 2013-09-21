@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import json, random
+import json, random, sys
 
 def resample(x_dist, n=10):
     data = []
@@ -8,8 +8,7 @@ def resample(x_dist, n=10):
         x = [random.normalvariate(*t) for t in x_dist]
         m = reduce(lambda x0, x1: x0 * x1, x, 1)
         data.append({'id': i, 'x': x, 'm': m})
-
-    with open('data.json', 'w') as f:
-        f.write(json.dumps(data))
+    
+    sys.stdout.write(json.dumps(data))
 
 resample([(0, 1)] * 2, 127)
