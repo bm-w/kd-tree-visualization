@@ -1,5 +1,7 @@
 DIR := .
+SRC_DIR := $(DIR)/src
 PUB_DIR := $(DIR)/public
+LIB_DIR := $(DIR)/lib
 MOD_DIR := $(DIR)/node_modules
 
 COFFEE_BIN := $(MOD_DIR)/coffee-script/bin/coffee
@@ -25,14 +27,14 @@ build:
 $(PUB_DIR)/:
 	mkdir -p $(PUB_DIR)
 
-$(PUB_DIR)/index.html: $(PUB_DIR) $(DIR)/index.jade
-	$(JADE_BIN) < $(DIR)/index.jade > $(PUB_DIR)/index.html
+$(PUB_DIR)/index.html: $(PUB_DIR) $(SRC_DIR)/index.jade
+	$(JADE_BIN) < $(SRC_DIR)/index.jade > $(PUB_DIR)/index.html
 
-$(PUB_DIR)/app.js: $(PUB_DIR) $(DIR)/app.coffee
-	$(COFFEE_BIN) -cp $(DIR)/app.coffee > $(PUB_DIR)/app.js
+$(PUB_DIR)/app.js: $(PUB_DIR) $(SRC_DIR)/app.coffee
+	$(COFFEE_BIN) -cp $(SRC_DIR)/app.coffee > $(PUB_DIR)/app.js
 
-$(PUB_DIR)/data.json: $(PUB_DIR) $(DIR)/gendata.py
-	python $(DIR)/gendata.py > $(PUB_DIR)/data.json
+$(PUB_DIR)/data.json: $(PUB_DIR) $(LIB_DIR)/gendata.py
+	python $(LIB_DIR)/gendata.py > $(PUB_DIR)/data.json
 
 # ---
 
