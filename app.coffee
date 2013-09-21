@@ -165,15 +165,15 @@
     depth = if tree.depth? then tree.depth else depth
 
     path = [node = tree].concat (while (c = node.children)?
-      node = c[if b = (x[k = depth++ % 2] < node.value.x[k]) then 0 else 1])
+      node = c[if x[k = depth++ % 2] - node.value.x[k] < 0 then 0 else 1])
 
     for node in (do path.reverse)
       dd = _dot [(xn = node.value.x)[0] - x[0],  xn[1] - x[1]]
       if dd < ddBest
         [best, xb, ddBest] = [node, xn, dd]
       if node.children?
-        if ddBest > (v = xn[k = --depth % 2] - x[k]) * v
-          root = node.children[if v < 0 then 0 else 1]
+        if ddBest > (v = x[k = --depth % 2] - xn[k]) * v
+          root = node.children[if v > 0 then 0 else 1]
           [node, dd] = kdTree.nearest x, root, null, ddBest
           if node? then [best, xb, ddBest] = [node, node.value.x, dd]
     if depth == 0 then best else [best, ddBest]
